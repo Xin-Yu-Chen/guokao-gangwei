@@ -1,0 +1,14 @@
+# 开发 / 临时文件
+_shots/
+_verify/
+__pycache__/
+*.pyc
+*.py
+_探查结果*.txt
+
+# 数据的本地 gzip 副本（GitHub Pages 会自动 gzip 传输）
+docs/data/*.gz
+
+# 系统文件
+Thumbs.db
+.DS_Store
