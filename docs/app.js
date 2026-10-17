@@ -324,6 +324,7 @@ function exportCsv(){
   document.body.appendChild(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   toast("已导出 "+S.rows.length+" 条（Excel 可直接打开）");
+  bumpAction();
 }
 
 /* ---------- 单岗位 Word 分析 ---------- */
@@ -400,6 +401,33 @@ function openCompare(){
   $("compareModal").hidden=false;
 }
 
+/* ---------- 赞赏（定期弹窗，自愿、不强制） ---------- */
+const DONATE_FIRST=10;        // 首次：累计约 10 次有效操作后提示
+const DONATE_STEP=40;         // 之后每累计 40 次操作再提示一次
+const DONATE_THANK_STEP=140;  // 点过“我已赞赏”后，间隔更久再提示
+function dGet(k,def){const v=localStorage.getItem(k);return v==null?def:+v;}
+function bumpAction(){
+  if(sessionStorage.getItem("gk_donate_session"))return;  // 本次会话已自动弹过，不再打扰
+  const c=dGet("gk_donate_act",0)+1;
+  localStorage.setItem("gk_donate_act",c);
+  if(c>=dGet("gk_donate_next",DONATE_FIRST))openDonate(true);
+}
+function openDonate(auto){
+  $("donateModal").hidden=false;
+  if(auto){
+    sessionStorage.setItem("gk_donate_session","1");
+    localStorage.setItem("gk_donate_next",dGet("gk_donate_act",0)+DONATE_STEP);
+  }
+}
+function closeDonate(thank){
+  $("donateModal").hidden=true;
+  if(thank){
+    localStorage.setItem("gk_donate_next",dGet("gk_donate_act",0)+DONATE_THANK_STEP);
+    sessionStorage.setItem("gk_donate_session","1");
+    toast("感谢你的支持，祝你成功上岸！");
+  }
+}
+
 /* ---------- 分享链接 ---------- */
 function writeHash(){
   const f=getForm();const p=new URLSearchParams();
@@ -430,7 +458,7 @@ function bindEvents(){
     const it=e.target.closest(".sg-item");if(!it)return;
     $("majorInput").value=it.dataset.name;$("majorSuggest").hidden=true;apply();
   });
-  $("applyBtn").addEventListener("click",()=>{apply();window.scrollTo({top:document.querySelector(".results").offsetTop-70,behavior:"smooth"});});
+  $("applyBtn").addEventListener("click",()=>{apply();bumpAction();window.scrollTo({top:document.querySelector(".results").offsetTop-70,behavior:"smooth"});});
   $("resetBtn").addEventListener("click",()=>{
     ["majorInput","cityInput","deptInput","kwInput","hcInput"].forEach(id=>$(id).value="");
     ["myEdu","provSel","polSel","grassSel","examSel","levelSel","attrSel","distSel","proTestSel"].forEach(id=>$(id).value="");
@@ -445,7 +473,11 @@ function bindEvents(){
   $("compareBtn").addEventListener("click",openCompare);
   $("compareClose").addEventListener("click",()=>$("compareModal").hidden=true);
   $("compareModal").addEventListener("click",e=>{if(e.target.id==="compareModal")e.currentTarget.hidden=true;});
-  $("donateBtn").addEventListener("click",()=>toast("赞赏渠道即将开通，感谢支持"));
+  $("donateBtn").addEventListener("click",()=>openDonate(false));
+  $("donateClose").addEventListener("click",()=>closeDonate(false));
+  $("donateLater").addEventListener("click",()=>closeDonate(false));
+  $("donateDone").addEventListener("click",()=>closeDonate(true));
+  $("donateModal").addEventListener("click",e=>{if(e.target.id==="donateModal")closeDonate(false);});
   $("favViewBtn").addEventListener("click",()=>{
     S.favView=!S.favView;
     $("favViewBtn").style.background=S.favView?"#eff4ff":"";
@@ -460,18 +492,19 @@ function bindEvents(){
     const act=e.target.closest("[data-act]");
     if(act){
       const type=act.dataset.act;
-      if(type==="word"){const r=S.rows.find(x=>x.it.jobCode===code);downloadWord(it,r?r.m:null);}
+      if(type==="word"){const r=S.rows.find(x=>x.it.jobCode===code);downloadWord(it,r?r.m:null);bumpAction();}
       else if(type==="fav"){toggleFav(code);render();}
       else if(type==="cmp"){toggleCmp(code);render();}
       else if(type==="expand"){
         const d=card.querySelector(".detail");d.classList.toggle("show");
         act.textContent=d.classList.contains("show")?"收起":"展开全部字段";
+        bumpAction();
       }
     }
   });
   $("pager").addEventListener("click",e=>{
     const b=e.target.closest("button[data-pg]");if(!b||b.disabled)return;
-    S.page=+b.dataset.pg;render();window.scrollTo({top:document.querySelector(".results").offsetTop-70,behavior:"smooth"});
+    S.page=+b.dataset.pg;render();bumpAction();window.scrollTo({top:document.querySelector(".results").offsetTop-70,behavior:"smooth"});
   });
 }
 

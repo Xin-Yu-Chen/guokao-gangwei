@@ -176,12 +176,31 @@
   </div>
 </div>
 
+<!-- ============ 赞赏弹窗 ============ -->
+<div class="modal-mask" id="donateModal" hidden>
+  <div class="modal donate-modal">
+    <div class="modal-head">
+      <span>支持作者继续运营</span>
+      <button class="icon-x" id="donateClose" type="button" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-body donate-body">
+      <p class="donate-tip">本站是<b>免费、非官方</b>的选岗检索工具，数据整理与服务器维护需要成本。如果它确实帮你省了时间，欢迎扫码赞赏，金额随意；<b>不赞赏也不影响任何功能</b>。</p>
+      <img class="donate-qr" src="assets/donate.jpg" alt="支付宝赞赏收款码（添声工作室）" width="300" height="450" loading="lazy">
+      <p class="donate-pay">请用「支付宝」扫码 · 支持花呗 / 信用卡 / 分期付款</p>
+      <button class="btn-primary" id="donateDone" type="button">我已赞赏，谢谢</button>
+      <button class="btn-ghost" id="donateLater" type="button">暂不赞赏</button>
+    </div>
+  </div>
+</div>
+
 <!-- 轻提示 -->
 <div class="toast" id="toast" hidden></div>
 
 <footer class="footer">
   <div class="wrap">
-    <p>数据来源：2027 年度中央机关及其直属机构考试录用公务员招考简章（全国职位表）、2027 国考税务系统专业参考目录。本工具为<mark>个人制作的非官方信息检索辅助</mark>，与小米无关、与任何招录机关无关；专业匹配为模糊结果，<mark>请以官方公告及报名系统为准</mark>。</p>
+    <p>数据来源：2027 年度中央机关及其直属机构考试录用公务员招考简章（全国职位表）、2027 国考税务系统专业参考目录。本工具为<mark>个人制作的非官方信息检索辅助</mark>，与任何招录机关、官方机构无关；专业匹配为模糊结果，<mark>请以官方公告及报名系统为准</mark>。</p>
     <p>联系邮箱：xinyu-ch@qq.com　|　数据仅在你本机浏览器中检索，不上传任何信息。</p>
   </div>
 </footer>
